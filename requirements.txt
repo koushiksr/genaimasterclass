@@ -45,3 +45,4 @@ protobuf==3.20.2
 wandb
 jupyterlab
 gradio
+langchain_huggingface
