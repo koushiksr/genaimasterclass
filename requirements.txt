@@ -46,3 +46,4 @@ wandb
 jupyterlab
 gradio
 langchain_huggingface
+litellm
