@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding LLMs: From Basics to Frontier Models</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            overflow-x: hidden;
+        }
+
+        .slide {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            scroll-behavior: smooth;
+            position: relative;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 20px;
+            left: 60px;
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 600;
+        }
+
+        .slide-hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .slide-hero h1 {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .slide-hero p {
+            font-size: 24px;
+            color: #cbd5e0;
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .slide-hero .tagline {
+            font-size: 18px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .slide-part {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .slide-part h2 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        .slide-part .part-number {
+            font-size: 18px;
+            color: #bfdbfe;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .slide-part .part-description {
+            font-size: 20px;
+            color: #dbeafe;
+            margin-bottom: 40px;
+        }
+
+        .slide-content {
+            background: white;
+        }
+
+        .slide-content-inner {
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        .slide-content h2 {
+            font-size: 48px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 30px;
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .slide-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: #3b82f6;
+            border-radius: 2px;
+        }
+
+        .slide-content p {
+            font-size: 18px;
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .story-box {
+            background: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .story-box h4 {
+            color: #3b82f6;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .story-box p {
+            color: #334155;
+            font-size: 16px;
+            line-height: 1.7;
+            margin: 5px 0;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .comparison-item {
+            padding: 25px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .comparison-item.before {
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .comparison-item.after {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .comparison-item h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .comparison-item.before h4 {
+            color: #dc2626;
+        }
+
+        .comparison-item.after h4 {
+            color: #16a34a;
+        }
+
+        .comparison-item p {
+            font-size: 15px;
+            line-height: 1.7;
+            margin: 8px 0;
+        }
+
+        .key-insight {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+
+        .key-insight h4 {
+            color: #b45309;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .key-insight p {
+            color: #92400e;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+
+        .bullet-list {
+            list-style: none;
+            margin: 25px 0;
+        }
+
+        .bullet-list li {
+            font-size: 17px;
+            color: #334155;
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .bullet-list li::before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-size: 22px;
+        }
+
+        .three-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .column-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .column-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .column-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+
+        .column-card p {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        .use-case-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 4px solid #3b82f6;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .use-case-box h4 {
+            color: #0369a1;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .use-case-box .example-tag {
+            font-size: 12px;
+            background: #dbeafe;
+            color: #0369a1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 3px 3px 3px 0;
+            font-weight: 600;
+        }
+
+        .use-case-box p {
+            font-size: 15px;
+            color: #0c4a6e;
+            line-height: 1.7;
+            margin: 10px 0;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .slide-nav {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .slide-nav button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .slide-nav button:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: #3b82f6;
+            z-index: 101;
+        }
+
+        .flavor-diagram {
+            background: #f8fafc;
+            border: 2px solid #cbd5e0;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .flavor-item {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-left: 4px solid #3b82f6;
+            border-radius: 4px;
+        }
+
+        .flavor-item strong {
+            color: #0369a1;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- SLIDE 1: HERO INTRO -->
+<div class="slide slide-hero" id="slide1">
+    <div class="slide-number">Slide 1 of 12</div>
+    <div>
+        <h1>Understanding LLMs</h1>
+        <p>From Base Models to Frontier AI</p>
+        <p class="tagline">Your journey into Large Language Models starts here</p>
+    </div>
+</div>
+
+<!-- SLIDE 2: THE 3 FLAVORS - OVERVIEW -->
+<div class="slide slide-content" id="slide2">
+    <div class="slide-number">Slide 2 of 12</div>
+    <div class="slide-content-inner">
+        <h2>LLMs Come in 3 Flavors</h2>
+        <p>Think of these as three different versions of the same core technology, each optimized for different jobs:</p>
+
+        <div class="three-columns">
+            <div class="column-card">
+                <h4>🧩 Base Model</h4>
+                <p>Raw model trained on massive text data. Can predict next words but needs fine-tuning for specific tasks.</p>
+                <p style="margin-top: 10px; font-size: 13px; color: #0369a1;"><strong>Best for:</strong> Learning a new skill through fine-tuning</p>
+            </div>
+            <div class="column-card">
+                <h4>💬 Chat/Instruct</h4>
+                <p>Fine-tuned to follow instructions and have conversations. Ready to use right away, faster and cheaper.</p>
+                <p style="margin-top: 10px; font-size: 13px; color: #0369a1;"><strong>Best for:</strong> Interactive use and creative work</p>
+            </div>
+            <div class="column-card">
+                <h4>🧠 Reasoning/Thinking</h4>
+                <p>Equipped with extended thinking. "Thinks through" complex problems step-by-step for better solutions.</p>
+                <p style="margin-top: 10px; font-size: 13px; color: #0369a1;"><strong>Best for:</strong> Hard problem-solving</p>
+            </div>
+        </div>
+
+        <div class="key-insight">
+            <h4>💡 Why Three Types?</h4>
+            <p>Different tasks have different needs. You don't use a truck for precision work, and you don't use a sports car to move houses. Same with LLMs—choose the right tool for the job.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: BASE MODELS DEEP DIVE -->
+<div class="slide slide-content" id="slide3">
+    <div class="slide-number">Slide 3 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Base Models: The Raw Foundation</h2>
+        <p>A Base Model is an LLM trained purely on predicting the next word in a sequence. It's the raw engine.</p>
+
+        <div class="story-box">
+            <h4>🔍 How It Works</h4>
+            <p>Trained on billions of words from books, articles, code, etc. The model learns: "When I see X, Y usually follows." It's like an advanced autocomplete—type a few words, it guesses the next ones.</p>
+        </div>
+
+        <div class="comparison">
+            <div class="comparison-item after">
+                <h4>✅ Strengths</h4>
+                <p>• Can be fine-tuned for ANY specific task<br>
+                • Most flexible foundation<br>
+                • Good for learning domain-specific language<br>
+                • Lower inference cost baseline</p>
+            </div>
+            <div class="comparison-item before">
+                <h4>❌ Limitations</h4>
+                <p>• Can't follow instructions well out-of-the-box<br>
+                • Might generate random or weird text<br>
+                • Requires fine-tuning to be useful<br>
+                • Not ready for production use</p>
+            </div>
+        </div>
+
+        <div class="use-case-box">
+            <h4>💼 Real Example</h4>
+            <p>If you're building a medical AI assistant, you'd start with a Base Model, then fine-tune it on medical literature so it learns medical terminology and context.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: CHAT/INSTRUCT MODELS -->
+<div class="slide slide-content" id="slide4">
+    <div class="slide-number">Slide 4 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Chat & Instruct Models: Ready to Talk</h2>
+        <p>A Chat Model is a Base Model that's been fine-tuned to understand instructions and have conversations. It's "trained to be helpful."</p>
+
+        <div class="story-box">
+            <h4>🤖 How It's Different</h4>
+            <p>After training on raw text, engineers give the model feedback on which responses are good and which are bad. Through this process (called RLHF - Reinforcement Learning from Human Feedback), it learns to follow instructions and chat naturally.</p>
+        </div>
+
+        <div class="comparison">
+            <div class="comparison-item after">
+                <h4>✅ Why We Use Them</h4>
+                <p>• Works immediately out-of-the-box<br>
+                • Faster and cheaper than reasoning models<br>
+                • Perfect for chatbots and content generation<br>
+                • Safe—already aligned to be helpful</p>
+            </div>
+            <div class="comparison-item before">
+                <h4>⚠️ Trade-offs</h4>
+                <p>• Less flexible than Base Models<br>
+                • Might hallucinate on complex topics<br>
+                • Not optimized for deep reasoning<br>
+                • Fixed personality from training</p>
+            </div>
+        </div>
+
+        <div class="use-case-box">
+            <h4>💼 Real Examples</h4>
+            <p><strong>ChatGPT, Claude, Gemini</strong> are all Chat Models. When you ask them to "write a poem" or "explain quantum physics," that's chat model territory. Fast, practical, creative.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: REASONING/THINKING MODELS -->
+<div class="slide slide-content" id="slide5">
+    <div class="slide-number">Slide 5 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Reasoning Models: The Deep Thinkers</h2>
+        <p>A Reasoning Model is designed to "think through" hard problems step-by-step, spending more compute upfront to get better answers.</p>
+
+        <div class="story-box">
+            <h4>🧠 "Budget Forcing" Explained</h4>
+            <p>The model is trained with "budget forcing"—by artificially adding thinking time, it performs better at complex tasks. Like giving a student extra time on a hard exam, they can think deeper and get better answers.</p>
+        </div>
+
+        <div class="comparison">
+            <div class="comparison-item after">
+                <h4>✅ What You Get</h4>
+                <p>• Solves hard math/logic problems<br>
+                • Better coding for complex tasks<br>
+                • Can reason through multi-step problems<br>
+                • Higher accuracy on tough questions</p>
+            </div>
+            <div class="comparison-item before">
+                <h4>⚠️ The Cost</h4>
+                <p>• Slower (needs time to think)<br>
+                • More expensive (more compute)<br>
+                • Overkill for simple tasks<br>
+                • Visible thinking (longer responses)</p>
+            </div>
+        </div>
+
+        <div class="use-case-box">
+            <h4>💼 Real Examples</h4>
+            <p>When debugging complex code, solving a challenging algorithm problem, or working through a math proof—you'd want a Reasoning Model. It's worth the extra time and cost for hard problems.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: FRONTIER MODELS COMPARISON -->
+<div class="slide slide-content" id="slide6">
+    <div class="slide-number">Slide 6 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Frontier Models: Who's Leading?</h2>
+        <p>These are the most advanced LLMs available today, each from major AI companies:</p>
+
+        <div class="three-columns">
+            <div class="column-card">
+                <h4>🟤 Anthropic</h4>
+                <p><strong>Claude Models</strong><br>Known for safety, reasoning, and detailed analysis. Strong at writing and code.</p>
+            </div>
+            <div class="column-card">
+                <h4>⚫ OpenAI</h4>
+                <p><strong>GPT Models</strong><br>Most popular. Great at creative writing, coding, and wide range of tasks.</p>
+            </div>
+            <div class="column-card">
+                <h4>🌐 Google</h4>
+                <p><strong>Gemini Models</strong><br>Multimodal (text + images). Integrates well with Google services.</p>
+            </div>
+        </div>
+
+        <div class="story-box">
+            <h4>🏆 The Competition</h4>
+            <p>There's also x.ai (Grok), DeepSeek, and others. The field is competitive. What matters: For your specific task, which model performs best and fits your budget?</p>
+        </div>
+
+        <div class="key-insight">
+            <h4>💡 No Clear Winner</h4>
+            <p>Each excels at different things. Choose based on: accuracy for your task, cost, speed, and specific capabilities you need. It's like picking between different tools in a toolbox.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: WHAT MAKES THEM GREAT -->
+<div class="slide slide-content" id="slide7">
+    <div class="slide-number">Slide 7 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Why Frontier LLMs Are Mind-Blowing</h2>
+        <p>What can these models actually do well?</p>
+
+        <div class="three-columns">
+            <div class="column-card">
+                <h4>📚 Synthesizing Information</h4>
+                <p>Take complex topics and explain them clearly. Answer questions in depth with structured, researched answers including summaries.</p>
+            </div>
+            <div class="column-card">
+                <h4>✍️ Fleshing Out Ideas</h4>
+                <p>Give rough notes, it builds a well-crafted email or blog post. Iterates with you until it's perfect.</p>
+            </div>
+            <div class="column-card">
+                <h4>💻 Coding</h4>
+                <p>Write and debug code. Far overtaken Stack Overflow as the go-to resource for engineers solving problems.</p>
+            </div>
+        </div>
+
+        <div class="use-case-box">
+            <h4>💼 Real Student Example</h4>
+            <p>You're stuck on a coding assignment. Instead of searching Stack Overflow for 30 minutes, you ask Claude/ChatGPT to explain the error and suggest fixes. You get a response in seconds, understand it better, and learn the concept.</p>
+        </div>
+
+        <div class="key-insight">
+            <h4>🚀 The Impact</h4>
+            <p>These models have genuinely changed how people work. They're not perfect, but they're incredibly useful assistants for research, writing, coding, and problem-solving.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: LIMITATIONS -->
+<div class="slide slide-content" id="slide8">
+    <div class="slide-number">Slide 8 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Limitations: What They CAN'T Do</h2>
+        <p>Frontier models are powerful, but they have real constraints:</p>
+
+        <div class="three-columns">
+            <div class="column-card">
+                <h4>📖 Specialized Domains</h4>
+                <p>Not PhD-level in niche fields. Limited knowledge in highly specialized domains they weren't trained on.</p>
+            </div>
+            <div class="column-card">
+                <h4>📰 Recent Events</h4>
+                <p>Knowledge cuts off at training date. Can't access current news or real-time information without external tools.</p>
+            </div>
+            <div class="column-card">
+                <h4>😅 Mistakes & Hallucinations</h4>
+                <p>Can confidently give wrong answers. May make blind jumps to conclusions instead of reasoning carefully.</p>
+            </div>
+        </div>
+
+        <div class="story-box">
+            <h4>⚠️ Real Limitation</h4>
+            <p><strong>Hallucinations are tricky:</strong> When a model doesn't know something, it might make up an answer that sounds plausible. This is why you should always verify important information.</p>
+        </div>
+
+        <div class="key-insight">
+            <h4>💡 Key Lesson</h4>
+            <p>These models are tools, not oracles. They're best used as assistants to boost your productivity, not as the final source of truth. Always verify. Always think critically.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 9: HOW TO CHOOSE -->
+<div class="slide slide-content" id="slide9">
+    <div class="slide-number">Slide 9 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Choosing the Right Model for Your Task</h2>
+        <p>Here's a practical decision framework:</p>
+
+        <div class="story-box">
+            <h4>❓ Ask Yourself These Questions</h4>
+            <p>
+            <strong>1. How complex is the task?</strong> (Simple = Chat, Complex = Reasoning)<br>
+            <strong>2. What's your budget?</strong> (Reasoning is more expensive)<br>
+            <strong>3. How much time do I have?</strong> (Reasoning is slower)<br>
+            <strong>4. Do I need latest info?</strong> (Might need external data integration)<br>
+            <strong>5. What accuracy level do I need?</strong> (Higher stakes = need better verification)
+            </p>
+        </div>
+
+        <div class="comparison">
+            <div class="comparison-item after">
+                <h4>✅ Choose Chat Model When:</h4>
+                <p>• Brainstorming ideas<br>
+                • Writing content<br>
+                • Explaining concepts<br>
+                • Quick coding help<br>
+                • Time is limited</p>
+            </div>
+            <div class="comparison-item after">
+                <h4>✅ Choose Reasoning Model When:</h4>
+                <p>• Solving complex algorithms<br>
+                • Deep debugging needed<br>
+                • Multi-step problem solving<br>
+                • High accuracy required<br>
+                • Time/cost allows</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 10: REAL WORLD USE CASES -->
+<div class="slide slide-content" id="slide10">
+    <div class="slide-number">Slide 10 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Real-World Use Cases for Students</h2>
+        <p>How you can actually use this stuff right now:</p>
+
+        <div class="use-case-box">
+            <h4>📝 Assignment Help</h4>
+            <p>Use Chat Models to brainstorm essay outlines, explain difficult concepts, or debug your code. Then use your brain to verify and refine. <span class="example-tag">ChatGPT</span> <span class="example-tag">Claude</span></p>
+        </div>
+
+        <div class="use-case-box">
+            <h4>💻 Learning to Code</h4>
+            <p>Stuck on a bug? Paste the error message and your code. The model explains what went wrong and how to fix it. Learn by understanding the explanation. <span class="example-tag">Coding Assistants</span></p>
+        </div>
+
+        <div class="use-case-box">
+            <h4>🧪 Building AI Projects</h4>
+            <p>Want to build something like a chatbot or RAG system? These models are your building blocks. Use Claude API or OpenAI API to integrate them into your projects. <span class="example-tag">API Access</span></p>
+        </div>
+
+        <div class="key-insight">
+            <h4>⚠️ Academic Integrity</h4>
+            <p>Using AI to learn is great. Using it to cheat is not. Check your school's policy. Best practice: Use AI to understand and learn, not to submit as your own work.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 11: CLAUDE DEEP RESEARCH & AGENTS -->
+<div class="slide slide-content" id="slide11">
+    <div class="slide-number">Slide 11 of 12</div>
+    <div class="slide-content-inner">
+        <h2>Advanced Features: Deep Research & Agents</h2>
+        <p>Some models like Claude have powerful advanced capabilities:</p>
+
+        <div class="comparison">
+            <div class="comparison-item after">
+                <h4>🔬 Deep Research Mode</h4>
+                <p>Claude can plan a research task, execute multiple parallel searches, fetch and analyze sources, cross-reference information, and provide a synthesized, cited report. It's like having a research assistant.</p>
+            </div>
+            <div class="comparison-item after">
+                <h4>🤖 Agent Mode</h4>
+                <p>Claude can take complex tasks (like "book a restaurant for 4 at 9PM in Bangalore with masala dose menu"), break them down, use tools, and execute multi-step workflows to get things done.</p>
+            </div>
+        </div>
+
+        <div class="use-case-box">
+            <h4>💼 For Your RAG Project</h4>
+            <p>Deep Research could gather and synthesize information for your project automatically. Agents could handle complex multi-step workflows. These are the "next level" of LLM capabilities.</p>
+        </div>
+
+        <div class="key-insight">
+            <h4>🎯 The Future</h4>
+            <p>As models get better, they'll do more than chat. They'll research, plan, execute, and build. The students who understand these tools will have a significant advantage in any field.</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 12: CONCLUSION -->
+<div class="slide slide-hero" id="slide12">
+    <div class="slide-number">Slide 12 of 12</div>
+    <div>
+        <h1>Your AI Journey Starts Now</h1>
+        <p>Understanding these 3 flavors and frontier models is just the beginning.</p>
+        <div style="background: rgba(255,255,255,0.1); border-left: 4px solid rgba(255,255,255,0.5); padding: 30px; border-radius: 8px; margin-top: 40px; text-align: left;">
+            <p style="color: #e0f2fe; font-size: 16px; margin: 12px 0;">
+            ✓ Base Models: Raw foundation for fine-tuning<br>
+            ✓ Chat Models: Ready-to-use, fast, practical<br>
+            ✓ Reasoning Models: Deep thinking for hard problems<br>
+            ✓ Frontier LLMs: Frontier models are remarkable<br>
+            ✓ Use tools wisely: Always verify, stay critical<br>
+            ✓ Build with them: APIs let you create amazing things
+            </p>
+        </div>
+        <p class="tagline" style="margin-top: 40px;">The future is collaborative: AI + human intelligence</p>
+    </div>
+</div>
+
+<!-- NAVIGATION -->
+<div class="slide-counter" id="counter">Slide 1 of 12</div>
+<div class="slide-nav">
+    <button onclick="prevSlide()">← Previous</button>
+    <button onclick="nextSlide()">Next →</button>
+</div>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = document.querySelectorAll('.slide').length;
+
+    function showSlide(n) {
+        const slides = document.querySelectorAll('.slide');
+        if (n > totalSlides) currentSlide = totalSlides;
+        if (n < 1) currentSlide = 1;
+
+        slides.forEach(slide => slide.style.display = 'none');
+        slides[currentSlide - 1].style.display = 'flex';
+
+        document.getElementById('counter').textContent = `Slide ${currentSlide} of ${totalSlides}`;
+
+        const progress = (currentSlide / totalSlides) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+    }
+
+    function nextSlide() {
+        currentSlide++;
+        showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide--;
+        showSlide(currentSlide);
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    showSlide(currentSlide);
+</script>
+
+</body>
+</html>
